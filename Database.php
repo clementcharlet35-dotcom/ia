@@ -19,9 +19,9 @@ final class Database
 
         $host = $_ENV['DB_HOST'] ?? '127.0.0.1';
         $port = $_ENV['DB_PORT'] ?? '3306';
-        $dbName = $_ENV['DB_NAME'] ?? 'pronostic_db';
-        $user = $_ENV['DB_USER'] ?? 'clement';
-        $password = $_ENV['DB_PASS'] ?? 'azerty';
+        $dbName = $_ENV['DB_NAME'] ?? '';
+        $user = $_ENV['DB_USER'] ?? '';
+        $password = $_ENV['DB_PASS'] ?? '';
 
         $dsn = "mysql:host={$host};port={$port};dbname={$dbName};charset=utf8mb4";
 
