@@ -1,0 +1,50 @@
+<header class="site-header">
+    <div class="container">
+        <div class="brand"><a href="/">coupe du monde 2026</a></div>
+        <nav>
+            <a href="/">Accueil</a>
+            <a href="/predictions">Pronostics</a>
+            <a href="/leaderboard">Classement</a>
+            <?php if (!empty($_SESSION['user']) && ($_SESSION['user']['role'] ?? '') === 'admin'): ?>
+                <a href="/admin">Admin</a>
+            <?php endif; ?>
+            <?php if (!empty($_SESSION['user'])): ?>
+                <form class="logout-form" action="/logout" method="post">
+                    <?= $this->csrfField() ?>
+                    <button type="submit">D&eacute;connexion</button>
+                </form>
+            <?php else: ?>
+                <a href="/login">Connexion</a>
+                <a href="/register">Inscription</a>
+            <?php endif; ?>
+            <form class="header-search" action="/search" method="get" role="search">
+                <label class="sr-only" for="header-search-q">Rechercher une &eacute;quipe</label>
+                <button class="header-search-button" type="submit" aria-label="Rechercher">
+                    <span aria-hidden="true">&#128269;</span>
+                </button>
+                <input
+                    id="header-search-q"
+                    name="q"
+                    type="search"
+                    placeholder="Equipe"
+                    value="<?= htmlspecialchars((string) ($_GET['q'] ?? '')) ?>"
+                    required
+                >
+            </form>
+            <details class="language-menu">
+                <summary class="language-toggle">
+                    <span aria-hidden="true">&#127760;</span>
+                    <span class="sr-only">Choisir une langue</span>
+                </summary>
+                <span class="language-options" id="language-options">
+                    <button type="button" data-lang="fr">Fran&ccedil;ais</button>
+                    <button type="button" data-lang="en">Anglais</button>
+                    <button type="button" data-lang="es">Espagnol</button>
+                </span>
+            </details>
+            <span class="header-icons" aria-hidden="true">
+                <span class="header-icon">&#128100;</span>
+            </span>
+        </nav>
+    </div>
+</header>

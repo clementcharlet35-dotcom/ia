@@ -1,0 +1,9 @@
+@"
+.env
+.env.local
+vendor/
+node_modules/
+cache/
+logs/
+*.log
+"@ | Set-Content .gitignore

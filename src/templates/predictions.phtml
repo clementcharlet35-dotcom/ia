@@ -1,0 +1,73 @@
+<div class="grid grid-2 page-grid">
+    <section class="card page-card">
+        <h1>Faire un pronostic</h1>
+        <form action="/predictions" method="post">
+            <?= $this->csrfField() ?>
+            <div class="form-group">
+                <label for="match_id">Match</label>
+                <select id="match_id" name="match_id" required>
+                    <option value="">Choisir un match</option>
+                    <?php foreach ($matches as $match): ?>
+                        <option
+                            value="<?= (int) $match['match_id'] ?>"
+                            data-match-option="1"
+                            data-country-name-1="<?= htmlspecialchars($match['team1_name']) ?>"
+                            data-country-key-1="<?= htmlspecialchars((string) ($match['team1_flag'] ?? '')) ?>"
+                            data-country-name-2="<?= htmlspecialchars($match['team2_name']) ?>"
+                            data-country-key-2="<?= htmlspecialchars((string) ($match['team2_flag'] ?? '')) ?>"
+                            data-match-date="<?= htmlspecialchars($match['match_date']) ?>"
+                        >
+                            <?= htmlspecialchars($match['team1_name']) ?> vs <?= htmlspecialchars($match['team2_name']) ?> - <?= htmlspecialchars($match['match_date']) ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="prediction_result">Résultat pronostiqué</label>
+                <select id="prediction_result" name="prediction_result" required>
+                    <option value="">Choisir</option>
+                    <option value="1">1 = victoire équipe 1</option>
+                    <option value="N">N = match nul</option>
+                    <option value="2">2 = victoire équipe 2</option>
+                </select>
+            </div>
+
+            <button class="btn-green" type="submit">Enregistrer</button>
+        </form>
+    </section>
+
+    <section class="card page-card">
+        <h2>Mes pronostics</h2>
+        <?php if (empty($userPredictions)): ?>
+            <p>Aucun pronostic enregistré.</p>
+        <?php else: ?>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Match</th>
+                            <th>Pronostic</th>
+                            <th>Validé</th>
+                            <th>Points</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($userPredictions as $prediction): ?>
+                            <tr>
+                                <td>
+                                    <span data-country-name="<?= htmlspecialchars($prediction['team1_name']) ?>" data-country-key="<?= htmlspecialchars((string) ($prediction['team1_flag'] ?? '')) ?>"><?= htmlspecialchars($prediction['team1_name']) ?></span>
+                                    vs
+                                    <span data-country-name="<?= htmlspecialchars($prediction['team2_name']) ?>" data-country-key="<?= htmlspecialchars((string) ($prediction['team2_flag'] ?? '')) ?>"><?= htmlspecialchars($prediction['team2_name']) ?></span>
+                                </td>
+                                <td><?= htmlspecialchars($prediction['prediction_result']) ?></td>
+                                <td><?= (int) $prediction['validated'] === 1 ? 'Oui' : 'Non' ?></td>
+                                <td><?= (int) $prediction['points_earned'] ?></td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+        <?php endif; ?>
+    </section>
+</div>

@@ -1,0 +1,49 @@
+<section class="card page-card leaderboard-card">
+    <h1>Classement</h1>
+    <div class="table-responsive">
+        <table>
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Utilisateur</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Points</th>
+                    <?php if (!empty($_SESSION['user']) && ($_SESSION['user']['role'] ?? '') === 'admin'): ?>
+                        <th>Action</th>
+                    <?php endif; ?>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($users as $index => $user): ?>
+                    <tr>
+                        <td><?= $index + 1 ?></td>
+                        <td><?= htmlspecialchars($user['username']) ?></td>
+                        <td><?= htmlspecialchars($user['email']) ?></td>
+                        <td><?= htmlspecialchars($user['role']) ?></td>
+                        <td><strong><?= (int) $user['points'] ?></strong></td>
+                        <?php if (!empty($_SESSION['user']) && ($_SESSION['user']['role'] ?? '') === 'admin'): ?>
+                            <td>
+                                <?php if (($user['role'] ?? 'user') !== 'admin' && (int) $user['user_id'] !== (int) ($_SESSION['user']['user_id'] ?? 0)): ?>
+                                    <form class="leaderboard-remove-form" action="/leaderboard/users/delete" method="post">
+                                        <?= $this->csrfField() ?>
+                                        <input type="hidden" name="user_id" value="<?= (int) $user['user_id'] ?>">
+                                        <button
+                                            class="leaderboard-remove-button"
+                                            type="submit"
+                                            title="Retirer cet utilisateur"
+                                            aria-label="Retirer <?= htmlspecialchars($user['username']) ?>"
+                                            onclick="return confirm('Retirer cet utilisateur du classement ?');"
+                                        >-</button>
+                                    </form>
+                                <?php else: ?>
+                                    <span class="leaderboard-remove-placeholder" aria-hidden="true">-</span>
+                                <?php endif; ?>
+                            </td>
+                        <?php endif; ?>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
+</section>

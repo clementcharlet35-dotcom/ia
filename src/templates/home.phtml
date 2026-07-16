@@ -1,0 +1,60 @@
+<section class="home-hero">
+    <div class="card home-card home-intro-card">
+        <h1>Bienvenue sur l'application de pronostics</h1>
+        <p>
+            Inscris-toi, connecte-toi, pronostique les matchs et grimpe dans le classement.
+        </p>
+        <p>
+            Le système attribue 1 point par bon pronostic après validation du résultat par l'administrateur.
+        </p>
+        <div class="home-actions">
+            <a class="btn btn-green" href="/predictions">Faire mes pronostics</a>
+            <a class="btn btn-secondary" href="/leaderboard">Voir le classement</a>
+        </div>
+    </div>
+
+    <aside class="card home-card home-account-card">
+        <h2>Compte connecté</h2>
+        <?php if (!empty($_SESSION['user'])): ?>
+            <p><strong>Utilisateur :</strong> <?= htmlspecialchars($_SESSION['user']['username']) ?></p>
+            <p><strong>Rôle :</strong> <?= htmlspecialchars($_SESSION['user']['role']) ?></p>
+        <?php else: ?>
+            <p>Tu n'es pas encore connecté.</p>
+            <a class="btn home-login-link" href="/login">Se connecter</a>
+        <?php endif; ?>
+    </aside>
+</section>
+
+<section class="card home-card home-matches-card">
+    <div class="home-section-title">
+        <h2>Prochains matchs</h2>
+    </div>
+    <?php if (empty($nextMatches)): ?>
+        <p>Aucun match planifié.</p>
+    <?php else: ?>
+        <div class="home-table-wrap">
+            <table class="home-table">
+                <thead>
+                    <tr>
+                        <th>Match</th>
+                        <th>Date</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($nextMatches as $match): ?>
+                        <tr>
+                            <td>
+                                <span data-country-name="<?= htmlspecialchars($match['team1_name']) ?>" data-country-key="<?= htmlspecialchars((string) ($match['team1_flag'] ?? '')) ?>"><?= htmlspecialchars($match['team1_name']) ?></span>
+                                vs
+                                <span data-country-name="<?= htmlspecialchars($match['team2_name']) ?>" data-country-key="<?= htmlspecialchars((string) ($match['team2_flag'] ?? '')) ?>"><?= htmlspecialchars($match['team2_name']) ?></span>
+                            </td>
+                            <td><?= htmlspecialchars($match['match_date']) ?></td>
+                            <td><?= htmlspecialchars((string) ($match['description'] ?? '')) ?></td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+    <?php endif; ?>
+</section>

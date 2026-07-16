@@ -1,0 +1,162 @@
+<section class="card page-card search-page">
+    <div class="search-page-header">
+        <div>
+            <h1>Recherche d'&eacute;quipe</h1>
+            <?php if ($query !== ''): ?>
+                <p>R&eacute;sultats pour <strong><?= htmlspecialchars($query) ?></strong></p>
+            <?php endif; ?>
+        </div>
+        <form class="search-page-form" action="/search" method="get" role="search">
+            <label class="sr-only" for="search-q">Rechercher une &eacute;quipe</label>
+            <input
+                id="search-q"
+                name="q"
+                type="search"
+                placeholder="Nom de l'equipe"
+                value="<?= htmlspecialchars($query) ?>"
+                required
+            >
+            <button type="submit">Rechercher</button>
+        </form>
+    </div>
+
+    <?php if ($query === ''): ?>
+        <p>Entrez le nom d'une &eacute;quipe pour voir sa fiche, ses matchs et ses r&eacute;sultats.</p>
+    <?php elseif (empty($results)): ?>
+        <p>Aucune &eacute;quipe trouv&eacute;e.</p>
+    <?php else: ?>
+        <div class="team-results">
+            <?php foreach ($results as $result): ?>
+                <?php
+                $team = $result['team'];
+                $upcoming = $result['upcoming'];
+                $past = $result['past'];
+                $stats = $result['stats'];
+                $renderFlag = static function (?string $flag, string $name): string {
+                    $flag = trim((string) $flag);
+                    $initials = strtoupper(substr(preg_replace('/[^A-Za-z]/', '', $name) ?: $name, 0, 2));
+
+                    if ($flag !== '') {
+                        $path = '/assets/images/flags/' . rawurlencode($flag);
+                        $absolutePath = dirname(__DIR__, 2) . '/assets/images/flags/' . $flag;
+
+                        if (is_file($absolutePath)) {
+                            return '<img class="team-flag-img" src="' . htmlspecialchars($path) . '" alt="Drapeau ' . htmlspecialchars($name) . '">';
+                        }
+                    }
+
+                    return '<span class="team-flag-fallback" aria-hidden="true">' . htmlspecialchars($initials) . '</span>';
+                };
+                ?>
+                <article class="team-result">
+                    <div class="team-result-header">
+                        <div class="team-title">
+                            <span class="team-flag">
+                                <?= $renderFlag($team['flag'] ?? null, (string) $team['name']) ?>
+                            </span>
+                            <span>
+                            <span class="badge">Equipe</span>
+                            <h2 data-country-name="<?= htmlspecialchars($team['name']) ?>" data-country-key="<?= htmlspecialchars((string) ($team['flag'] ?? '')) ?>"><?= htmlspecialchars($team['name']) ?></h2>
+                            </span>
+                        </div>
+                        <div class="team-stats" aria-label="Statistiques">
+                            <span class="stat-win"><strong><?= (int) $stats['wins'] ?></strong> V</span>
+                            <span class="stat-draw"><strong><?= (int) $stats['draws'] ?></strong> N</span>
+                            <span class="stat-loss"><strong><?= (int) $stats['losses'] ?></strong> D</span>
+                        </div>
+                    </div>
+
+                    <div class="search-match-grid">
+                        <section class="search-match-section">
+                            <h3>Matchs &agrave; venir</h3>
+                            <?php if (empty($upcoming)): ?>
+                                <p>Aucun match &agrave; venir.</p>
+                            <?php else: ?>
+                                <div class="table-responsive search-table-wrap">
+                                    <table class="search-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Adversaire</th>
+                                                <th>Date</th>
+                                                <th>Match</th>
+                                                <th>Pronostic</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <?php foreach ($upcoming as $match): ?>
+                                                <tr>
+                                                    <td data-label="Adversaire">
+                                                        <span class="team-inline">
+                                                            <span class="team-flag team-flag-small">
+                                                                <?= $renderFlag($match['opponent_flag'] ?? null, (string) $match['opponent_name']) ?>
+                                                            </span>
+                                                            <span data-country-name="<?= htmlspecialchars($match['opponent_name']) ?>" data-country-key="<?= htmlspecialchars((string) ($match['opponent_flag'] ?? '')) ?>"><?= htmlspecialchars($match['opponent_name']) ?></span>
+                                                        </span>
+                                                    </td>
+                                                    <td data-label="Date"><?= htmlspecialchars(date('d/m/Y H:i', strtotime((string) $match['match_date']))) ?></td>
+                                                    <td data-label="Match">
+                                                        <span data-country-name="<?= htmlspecialchars($match['team1_name']) ?>" data-country-key="<?= htmlspecialchars((string) ($match['team1_flag'] ?? '')) ?>"><?= htmlspecialchars($match['team1_name']) ?></span>
+                                                        vs
+                                                        <span data-country-name="<?= htmlspecialchars($match['team2_name']) ?>" data-country-key="<?= htmlspecialchars((string) ($match['team2_flag'] ?? '')) ?>"><?= htmlspecialchars($match['team2_name']) ?></span>
+                                                    </td>
+                                                    <td data-label="Pronostic"><a class="btn btn-small" href="/predictions">Pronostiquer</a></td>
+                                                </tr>
+                                            <?php endforeach; ?>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            <?php endif; ?>
+                        </section>
+
+                        <section class="search-match-section">
+                            <h3>Matchs pass&eacute;s</h3>
+                            <?php if (empty($past)): ?>
+                                <p>Aucun match pass&eacute;.</p>
+                            <?php else: ?>
+                                <div class="table-responsive search-table-wrap">
+                                    <table class="search-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Adversaire</th>
+                                                <th>Date</th>
+                                                <th>Match</th>
+                                                <th>Resultat</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <?php foreach ($past as $match): ?>
+                                                <tr>
+                                                    <td data-label="Adversaire">
+                                                        <span class="team-inline">
+                                                            <span class="team-flag team-flag-small">
+                                                                <?= $renderFlag($match['opponent_flag'] ?? null, (string) $match['opponent_name']) ?>
+                                                            </span>
+                                                            <span data-country-name="<?= htmlspecialchars($match['opponent_name']) ?>" data-country-key="<?= htmlspecialchars((string) ($match['opponent_flag'] ?? '')) ?>"><?= htmlspecialchars($match['opponent_name']) ?></span>
+                                                        </span>
+                                                    </td>
+                                                    <td data-label="Date"><?= htmlspecialchars(date('d/m/Y H:i', strtotime((string) $match['match_date']))) ?></td>
+                                                    <td data-label="Match">
+                                                        <span data-country-name="<?= htmlspecialchars($match['team1_name']) ?>" data-country-key="<?= htmlspecialchars((string) ($match['team1_flag'] ?? '')) ?>"><?= htmlspecialchars($match['team1_name']) ?></span>
+                                                        vs
+                                                        <span data-country-name="<?= htmlspecialchars($match['team2_name']) ?>" data-country-key="<?= htmlspecialchars((string) ($match['team2_flag'] ?? '')) ?>"><?= htmlspecialchars($match['team2_name']) ?></span>
+                                                    </td>
+                                                    <td data-label="Resultat">
+                                                        <?php if ($match['status'] === 'finished'): ?>
+                                                            <?= (int) $match['result_team1'] ?> - <?= (int) $match['result_team2'] ?>
+                                                        <?php else: ?>
+                                                            Non termin&eacute;
+                                                        <?php endif; ?>
+                                                    </td>
+                                                </tr>
+                                            <?php endforeach; ?>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            <?php endif; ?>
+                        </section>
+                    </div>
+                </article>
+            <?php endforeach; ?>
+        </div>
+    <?php endif; ?>
+</section>

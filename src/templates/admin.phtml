@@ -1,0 +1,106 @@
+<section class="admin-panel">
+    <h1>Panel Admin</h1>
+
+    <h2>Ajouter un nouveau match</h2>
+    <form class="admin-form admin-match-form" action="/admin/matches/store" method="post">
+        <?= $this->csrfField() ?>
+        <div class="admin-field">
+            <label for="team1_id">Equipe 1</label>
+            <select id="team1_id" name="team1_id" required>
+                <option value="">Choisir</option>
+                <?php foreach ($teams as $team): ?>
+                    <option value="<?= (int) $team['team_id'] ?>" data-country-name="<?= htmlspecialchars($team['name']) ?>" data-country-key="<?= htmlspecialchars((string) ($team['flag'] ?? '')) ?>"><?= htmlspecialchars($team['name']) ?></option>
+                <?php endforeach; ?>
+            </select>
+        </div>
+
+        <div class="admin-field">
+            <label for="team2_id">Equipe 2</label>
+            <select id="team2_id" name="team2_id" required>
+                <option value="">Choisir</option>
+                <?php foreach ($teams as $team): ?>
+                    <option value="<?= (int) $team['team_id'] ?>" data-country-name="<?= htmlspecialchars($team['name']) ?>" data-country-key="<?= htmlspecialchars((string) ($team['flag'] ?? '')) ?>"><?= htmlspecialchars($team['name']) ?></option>
+                <?php endforeach; ?>
+            </select>
+        </div>
+
+        <div class="admin-field">
+            <label for="match_date">Date et Heure</label>
+            <input id="match_date" type="datetime-local" name="match_date" required>
+        </div>
+
+        <div class="admin-field">
+            <label for="description">Description</label>
+            <input id="description" type="text" name="description" placeholder="Description du match">
+        </div>
+
+        <div class="admin-field">
+            <label for="api_match_id">ID API du match</label>
+            <input id="api_match_id" type="text" name="api_match_id" placeholder="Optionnel, ex: 497410">
+        </div>
+
+        <button type="submit" class="admin-button admin-button-primary">Ajouter</button>
+    </form>
+
+    <div class="admin-section-heading">
+        <h2>Matchs</h2>
+        <form action="/admin/results/sync" method="post">
+            <?= $this->csrfField() ?>
+            <button type="submit" class="admin-button admin-button-primary">Mettre a jour les resultats</button>
+        </form>
+    </div>
+    <div class="admin-table-wrap">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Match</th>
+                    <th>Date et Heure</th>
+                    <th>Resultat</th>
+                    <th>Sync API</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($matches as $match): ?>
+                    <tr>
+                        <td>
+                            <span data-country-name="<?= htmlspecialchars($match['team1_name']) ?>" data-country-key="<?= htmlspecialchars((string) ($match['team1_flag'] ?? '')) ?>"><?= htmlspecialchars($match['team1_name']) ?></span>
+                            vs
+                            <span data-country-name="<?= htmlspecialchars($match['team2_name']) ?>" data-country-key="<?= htmlspecialchars((string) ($match['team2_flag'] ?? '')) ?>"><?= htmlspecialchars($match['team2_name']) ?></span>
+                        </td>
+                        <td><?= htmlspecialchars($match['match_date']) ?></td>
+                        <td>
+                            <?php if ($match['result'] === '1'): ?>
+                                Victoire equipe 1
+                            <?php elseif ($match['result'] === '2'): ?>
+                                Victoire equipe 2
+                            <?php elseif ($match['result'] === 'N'): ?>
+                                Match nul
+                            <?php else: ?>
+                                -
+                            <?php endif; ?>
+                        </td>
+                        <td>
+                            <?php if ($match['status'] === 'finished'): ?>
+                                Termine
+                            <?php elseif (!empty($match['result_sync_error'])): ?>
+                                <?= htmlspecialchars($match['result_sync_error']) ?>
+                            <?php else: ?>
+                                En attente
+                            <?php endif; ?>
+                        </td>
+                        <td>
+                            <form action="/admin/matches/delete" method="post">
+                                <?= $this->csrfField() ?>
+                                <input type="hidden" name="match_id" value="<?= (int) $match['match_id'] ?>">
+                                <button type="submit" class="admin-button admin-button-danger">Supprimer</button>
+                            </form>
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<script src="/assets/js/admin.js"></script>

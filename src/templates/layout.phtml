@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><?= htmlspecialchars($_ENV['APP_NAME'] ?? 'Pronostics MVC') ?></title>
+    <link rel="stylesheet" href="/assets/styles/style.css?v=20260612-green-buttons">
+</head>
+<body>
+    <?php require __DIR__ . '/partials/_header.phtml'; ?>
+
+    <main class="main-content">
+        <div class="container">
+            <?php if (!empty($_SESSION['flash'])): ?>
+                <div class="alert <?= ($_SESSION['flash']['type'] ?? 'success') === 'success' ? 'alert-success' : 'alert-error' ?>">
+                    <?= htmlspecialchars($_SESSION['flash']['message'] ?? '') ?>
+                </div>
+                <?php unset($_SESSION['flash']); ?>
+            <?php endif; ?>
+
+            <?= $content ?>
+        </div>
+    </main>
+
+    <?php require __DIR__ . '/partials/_footer.phtml'; ?>
+    <script src="/assets/js/main.js?v=20260527"></script>
+</body>
+</html>
