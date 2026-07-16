@@ -1,24 +1,69 @@
-# Pronostics MVC
+ # Plateforme de pronostics sportifs - Coupe du Monde 2026
+
+ 
+
+Projet réalisé dans le cadre du Titre Professionnel Développeur Web et Web Mobile à la 3W Academy.
+
+ 
+
+## Objectif
+
+ 
+
+Créer une application web permettant à des utilisateurs de faire des pronostics sportifs simples entre amis ou collègues.
+
+ 
+
+## Fonctionnalités
+
+ 
+
+- Inscription et connexion utilisateur
+
+- Pronostic 1 / N / 2
+
+- Classement automatique
+
+- Administration des matchs
+
+- Synchronisation possible des résultats via API
+
+- Interface responsive
+
+ 
+
+## Technologies utilisées
+
+ 
+
+- HTML5
+
+- CSS3
+
+- JavaScript
+
+- PHP 8
+
+- MySQL
+
+- PDO
+
+- Composer
+
+- Architecture MVC
+
+ 
 
 ## Installation
 
-1. Copier `.env.example` vers `.env`
-2. Configurer la base de données
-3. Importer `database/schema.sql`
-4. Installer les dépendances :
+ 
 
-```bash
-composer install
-```
+1. Cloner le projet
 
-5. Lancer le serveur :
+2. Installer les dépendances avec Composer
 
-```bash
-php -S localhost:8000
-```
+3. Importer la base de données MySQL
 
-## Comptes de test
+4. Configurer le fichier `.env`
 
-Après import SQL :
-- admin@pronostics.test / admin12345
-- john@pronostics.test / password123
+5. Lancer le projet sur un serveur compatible PHP / Apache
